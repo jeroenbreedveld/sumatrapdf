@@ -19,6 +19,9 @@ enum PrintScaleAdv { PrintScaleNone = 0, PrintScaleShrink, PrintScaleFit };
 struct Print_Advanced_Data {
     PrintRangeAdv range;
     PrintScaleAdv scale;
+	short deltaX = 5;
+	short deltaY = 5;
+	short zoom = 0;
 
     explicit Print_Advanced_Data(PrintRangeAdv range=PrintRangeAll,
                         PrintScaleAdv scale=PrintScaleShrink) :
