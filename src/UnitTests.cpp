@@ -10,9 +10,16 @@
 #include "SettingsStructs.h"
 #include "GlobalPrefs.h"
 #include "ParseCommandLine.h"
+#include "SumatraDialogs.h"
 
 // must be last to over-write assert()
 #include "UtAssert.h"
+
+// Stubs for parameters
+short Print_CommandLine_Params::deltaX = 5;
+short Print_CommandLine_Params::deltaY = 5;
+short Print_CommandLine_Params::zoom = 0;
+wchar_t Print_CommandLine_Params::jobName[1024] = L"Default Job Name";
 
 static void ParseCommandLineTest()
 {

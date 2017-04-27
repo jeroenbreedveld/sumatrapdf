@@ -15,6 +15,11 @@
 #include "SumatraDialogs.h"
 #include "Translations.h"
 
+short Print_CommandLine_Params::deltaX = 5;
+short Print_CommandLine_Params::deltaY = 5;
+short Print_CommandLine_Params::zoom = 0;
+wchar_t Print_CommandLine_Params::jobName[1024] = L"Default Job Name";
+
 // cf. http://msdn.microsoft.com/en-us/library/ms645398(v=VS.85).aspx
 struct DLGTEMPLATEEX {
     WORD      dlgVer;   // 0x0001

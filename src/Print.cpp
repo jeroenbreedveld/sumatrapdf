@@ -128,9 +128,11 @@ static bool PrintToDevice(const PrintData& pd, ProgressUpdateUI* progressUI = nu
         fileName.Set(url::GetFileName(gPluginURL));
         // fall back to a generic "filename" instead of the more confusing temporary filename
         di.lpszDocName = fileName ? fileName : L"filename";
-    } else
-		di.lpszDocName = L"Job Name from param";
+    }
+    else {
+        di.lpszDocName = (LPCWSTR)pd.advData.cmdParams.jobName;         
         //di.lpszDocName = engine.FileName();
+    }
 
     int current = 1, total = 0;
     if (pd.sel.Count() == 0) {
@@ -310,7 +312,7 @@ static bool PrintToDevice(const PrintData& pd, ProgressUpdateUI* progressUI = nu
                 }
                 if (bmp && bmp->GetBitmap()) {
                     //RectI rc(offset.x, offset.y, bmp->Size().dx * shrink, bmp->Size().dy * shrink);
-					RectI rc(offset.x + pd.advData.deltaX * 100, offset.y + pd.advData.deltaX * 100, bmp->Size().dx * shrink + pd.advData.zoom, bmp->Size().dy * shrink + pd.advData.zoom);
+					RectI rc(offset.x + pd.advData.cmdParams.deltaX * 100, offset.y + pd.advData.cmdParams.deltaX * 100, bmp->Size().dx * shrink + pd.advData.cmdParams.zoom, bmp->Size().dy * shrink + pd.advData.cmdParams.zoom);
 					ok = bmp->StretchDIBits(hdc, rc);
                 }
                 delete bmp;

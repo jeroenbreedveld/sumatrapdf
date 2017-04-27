@@ -16,12 +16,18 @@ bool      Dialog_AddFavorite(HWND hwnd, const WCHAR *pageNo, ScopedMem<WCHAR>& f
 enum PrintRangeAdv { PrintRangeAll = 0, PrintRangeEven, PrintRangeOdd };
 enum PrintScaleAdv { PrintScaleNone = 0, PrintScaleShrink, PrintScaleFit };
 
+struct Print_CommandLine_Params {
+    static short deltaX;           // = 5 by default
+    static short deltaY;           // = 5 by default
+    static short zoom;             // = 0 by default
+    static wchar_t jobName[1024];  // = by some name by default
+};
+
 struct Print_Advanced_Data {
     PrintRangeAdv range;
     PrintScaleAdv scale;
-	short deltaX = 5;
-	short deltaY = 5;
-	short zoom = 0;
+
+    Print_CommandLine_Params cmdParams;
 
     explicit Print_Advanced_Data(PrintRangeAdv range=PrintRangeAll,
                         PrintScaleAdv scale=PrintScaleShrink) :
