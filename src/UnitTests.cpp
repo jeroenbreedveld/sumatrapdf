@@ -16,9 +16,10 @@
 #include "UtAssert.h"
 
 // Stubs for parameters
-short Print_CommandLine_Params::deltaX = 5;
-short Print_CommandLine_Params::deltaY = 5;
+short Print_CommandLine_Params::deltaX = 0;
+short Print_CommandLine_Params::deltaY = 0;
 short Print_CommandLine_Params::zoom = 0;
+short Print_CommandLine_Params::jobNameIsSet = 0;
 wchar_t Print_CommandLine_Params::jobName[1024] = L"Default Job Name";
 
 static void ParseCommandLineTest()

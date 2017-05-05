@@ -261,35 +261,10 @@ enum {
     Silent
 };
 
-void ParseShortParameter(WCHAR* printSettings, const WCHAR* paramName, short* value)
+int ParseStringParameter(WCHAR* printSettings, const WCHAR* paramName, wchar_t* value, int value_size)
 {
     UNUSED(value);
-    wchar_t *start = wcsstr(printSettings, paramName);
-    if (start)
-    {
-        int i = 0;
-        int p = -1;
-        while (start[i] != 0 && start[i] != L',' && start[i] != L';')
-        {
-            if (start[i] == L'=')
-                p = i;
-            i++;
-        }
-        
-        if (p>=0)
-            *value = (short)_wtoi(&start[p+1]);
-
-        for (int j = 0; j <= i; j++)
-        {
-            if (start[j] != 0)
-                start[j] = ' ';
-        }
-    }
-}
-
-void ParseStringParameter(WCHAR* printSettings, const WCHAR* paramName, wchar_t* value, int value_size)
-{
-    UNUSED(value);
+    int result = 0;
     wchar_t *start = wcsstr(printSettings, paramName);
     if (start)
     {
@@ -302,7 +277,10 @@ void ParseStringParameter(WCHAR* printSettings, const WCHAR* paramName, wchar_t*
             i++;
         }
 
-        wcsncpy_s(value, value_size, &start[p + 1], p - i);
+        if (start[i])
+            i--;
+
+        wcsncpy_s(value, value_size, &start[p + 1], i - p);
         if (p - i < value_size)
             value[p - i] = 0;
         else
@@ -313,7 +291,10 @@ void ParseStringParameter(WCHAR* printSettings, const WCHAR* paramName, wchar_t*
             if (start[j] != 0)
                 start[j] = ' ';
         }
+        result = 1;
     }
+
+    return result;
 }
 
 static int GetArgNo(const WCHAR* argName) {
@@ -367,12 +348,9 @@ void CommandLineInfo::ParseCommandLine(const WCHAR* cmdLine) {
             // e.g. -print-settings "1-3,5,10-8,odd,fit"
 
             handle_string_param(printSettings);
-
-            ParseShortParameter(printSettings, L"deltaX", &Print_CommandLine_Params::deltaX);
-            ParseShortParameter(printSettings, L"deltaY", &Print_CommandLine_Params::deltaY);
-            ParseShortParameter(printSettings, L"zoom", &Print_CommandLine_Params::zoom);
-            ParseStringParameter(printSettings, L"jobName", Print_CommandLine_Params::jobName, sizeof(Print_CommandLine_Params::jobName)/sizeof(wchar_t));
             
+
+            Print_CommandLine_Params::jobNameIsSet = (short)ParseStringParameter(printSettings, L"job", Print_CommandLine_Params::jobName, sizeof(Print_CommandLine_Params::jobName)/sizeof(wchar_t));                        
             str::RemoveChars(printSettings, L" ");
             str::TransChars(printSettings, L";", L",");
         } else if (ExitWhenDone == arg || ExitOnPrint == arg) {

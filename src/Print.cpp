@@ -130,8 +130,10 @@ static bool PrintToDevice(const PrintData& pd, ProgressUpdateUI* progressUI = nu
         di.lpszDocName = fileName ? fileName : L"filename";
     }
     else {
-        di.lpszDocName = (LPCWSTR)pd.advData.cmdParams.jobName;         
-        //di.lpszDocName = engine.FileName();
+        if (pd.advData.cmdParams.jobNameIsSet)
+            di.lpszDocName = (LPCWSTR)pd.advData.cmdParams.jobName;         
+        else
+            di.lpszDocName = engine.FileName();
     }
 
     int current = 1, total = 0;
@@ -312,7 +314,7 @@ static bool PrintToDevice(const PrintData& pd, ProgressUpdateUI* progressUI = nu
                 }
                 if (bmp && bmp->GetBitmap()) {
                     //RectI rc(offset.x, offset.y, bmp->Size().dx * shrink, bmp->Size().dy * shrink);
-					RectI rc(offset.x + pd.advData.cmdParams.deltaX * 100, offset.y + pd.advData.cmdParams.deltaX * 100, bmp->Size().dx * shrink + pd.advData.cmdParams.zoom, bmp->Size().dy * shrink + pd.advData.cmdParams.zoom);
+					RectI rc(offset.x + pd.advData.cmdParams.deltaX, offset.y + pd.advData.cmdParams.deltaY, bmp->Size().dx * shrink + pd.advData.cmdParams.zoom, bmp->Size().dy * shrink + pd.advData.cmdParams.zoom);
 					ok = bmp->StretchDIBits(hdc, rc);
                 }
                 delete bmp;
@@ -700,7 +702,35 @@ static void ApplyPrintSettings(const WCHAR* printerName, const WCHAR* settings, 
     for (size_t i = 0; i < rangeList.Count(); i++) {
         int val;
         PRINTPAGERANGE pr;
-        if (str::Parse(rangeList.At(i), L"%d-%d%$", &pr.nFromPage, &pr.nToPage)) {
+        //const wchar_t* current = rangeList.At(i);
+        
+        if (str::StartsWithI(rangeList.At(i), L"deltaX")) {
+            wchar_t* equal = str::FindChar(rangeList.At(i), L'=');
+            if (equal)            
+                advanced.cmdParams.deltaX = (short)_wtoi(&equal[1]);
+        }
+        else  if (str::StartsWithI(rangeList.At(i), L"deltaY")) {
+            wchar_t* equal = str::FindChar(rangeList.At(i), L'=');
+            if (equal)
+                advanced.cmdParams.deltaY = (short)_wtoi(&equal[1]);
+        }
+        else  if (str::StartsWithI(rangeList.At(i), L"zoom")) {
+            wchar_t* equal = str::FindChar(rangeList.At(i), L'=');
+            if (equal)
+                advanced.cmdParams.zoom = (short)_wtoi(&equal[1]);
+        }
+        /*else  if (str::StartsWithI(rangeList.At(i), L"jobName")) {
+            wchar_t* equal = str::FindChar(rangeList.At(i), L'=');
+            if (equal)
+            {
+                advanced.cmdParams.jobNameIsSet = 1;
+
+
+
+            }
+        }
+        */
+        else if (str::Parse(rangeList.At(i), L"%d-%d%$", &pr.nFromPage, &pr.nToPage)) {
             pr.nFromPage = limitValue(pr.nFromPage, (DWORD)1, (DWORD)pageCount);
             pr.nToPage = limitValue(pr.nToPage, (DWORD)1, (DWORD)pageCount);
             ranges.Append(pr);

@@ -17,9 +17,10 @@ enum PrintRangeAdv { PrintRangeAll = 0, PrintRangeEven, PrintRangeOdd };
 enum PrintScaleAdv { PrintScaleNone = 0, PrintScaleShrink, PrintScaleFit };
 
 struct Print_CommandLine_Params {
-    static short deltaX;           // = 5 by default
-    static short deltaY;           // = 5 by default
+    static short deltaX;           // = 0 by default
+    static short deltaY;           // = 0 by default
     static short zoom;             // = 0 by default
+    static short jobNameIsSet;     // 
     static wchar_t jobName[1024];  // = by some name by default
 };
 
